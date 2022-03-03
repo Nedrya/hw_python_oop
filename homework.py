@@ -2,16 +2,17 @@ from dataclasses import dataclass
 from dataclasses import asdict
 from typing import List
 
+
 @dataclass
 class InfoMessage:
     """Информационное сообщение о тренировке."""
     training_type: str
-    duration_hour: float
+    duration: float
     distance: float
     speed: float
     calories: float
     message = ('Тип тренировки: {training_type}; '
-               'Длительность: {duration_hour:0.3f} ч.; '
+               'Длительность: {duration:0.3f} ч.; '
                'Дистанция: {distance:0.3f} км; '
                'Ср. скорость: {speed:0.3f} км/ч; '
                'Потрачено ккал: {calories:0.3f}.')
@@ -87,8 +88,8 @@ class SportsWalking(Training):
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
         duration_minute = self.duration * 60
-        spent_calories = ((0.035 * self.weight + (self.get_mean_speed() * 2
-                          / self.height)
+        spent_calories = ((0.035 * self.weight + (self.get_mean_speed() ** 2
+                          // self.height)
                           * 0.029 * self.weight)
                           * duration_minute)
         return spent_calories
@@ -96,6 +97,7 @@ class SportsWalking(Training):
 
 class Swimming(Training):
     """Тренировка: плавание."""
+    LEN_STEP = 1.38
     coeff_calorie_6 = 1.1
     coeff_calorie_7 = 2
 
@@ -110,8 +112,8 @@ class Swimming(Training):
 
     def get_mean_speed(self) -> float:
         """Переопределили метод, средняя скорость."""
-        speed = self.length_pool + self.count_pool / self.M_IN_KM \
-            * self.duration
+        speed = self.length_pool * self.count_pool / self.M_IN_KM \
+            / self.duration
         return speed
 
     def get_spent_calories(self) -> float:
@@ -122,19 +124,22 @@ class Swimming(Training):
                           * self.weight)
         return spent_colories
 
+
 def read_package(workout_type: str, data: List[int]) -> Training:
     """Прочитать данные полученные от датчиков."""
     if workout_type == 'SWM':
-       return Swimming(data[0], data[1], data[2], data[3], data[4])
+        return Swimming(data[0], data[1], data[2], data[3], data[4])
     elif workout_type == 'RUN':
-       return Running(data[0], data[1], data[2])
+        return Running(data[0], data[1], data[2])
     elif workout_type == 'WLK':
         return SportsWalking(data[0], data[1], data[2], data[3])
+
 
 def main(training: Training) -> None:
     """Главная функция."""
     info = training.show_training_info()
     print(info.get_message())
+
 
 if __name__ == '__main__':
     packages = [
