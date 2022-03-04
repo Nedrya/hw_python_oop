@@ -41,7 +41,7 @@ class Training:
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-    pass
+        pass
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
@@ -50,16 +50,12 @@ class Training:
                            self.get_distance(),
                            self.get_mean_speed(),
                            self.get_spent_calories())
-    # возвращает объект класса сообщения.
 
 
 class Running(Training):
     """Тренировка: бег."""
     coeff_calorie_1 = 18
     coeff_calorie_2 = 20
-
-    def __init__(self, action: int, duration: float, weight: float) -> None:
-        super().__init__(action, duration, weight)
 
     def get_spent_calories(self) -> float:
         duration_minutes = self.duration * 60
@@ -127,12 +123,11 @@ class Swimming(Training):
 
 def read_package(workout_type: str, data: List[int]) -> Training:
     """Прочитать данные полученные от датчиков."""
-    if workout_type == 'SWM':
-        return Swimming(data[0], data[1], data[2], data[3], data[4])
-    elif workout_type == 'RUN':
-        return Running(data[0], data[1], data[2])
-    elif workout_type == 'WLK':
-        return SportsWalking(data[0], data[1], data[2], data[3])
+    dir_training = {'SWM': Swimming, 'RUN': Running, 'WLK': SportsWalking}
+    if workout_type in dir_training:
+        return dir_training[workout_type](*data)
+    else:
+        raise KeyError('Что нибудь!')
 
 
 def main(training: Training) -> None:
