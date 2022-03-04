@@ -127,7 +127,7 @@ def read_package(workout_type: str, data: List[int]) -> Training:
     if workout_type in dir_training:
         return dir_training[workout_type](*data)
     else:
-        raise KeyError('Что нибудь!')
+        raise KeyError('Нет такого типа тренировки')
 
 
 def main(training: Training) -> None:
